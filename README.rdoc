@@ -14,6 +14,23 @@ To enable syntax checker functionality you should install following:
 * Vim-plugin syntastic: https://github.com/scrooloose/syntastic
 * Clcc complier: http://clcc.sourceforge.net/
 
+== OpenCL platform support
+
+Currently, this plugin features support for beignet, pocl, NVIDIA proprietary and AMD proprietary.
+
+== Switching computing platforms
+
+Some systems may have multiple computing platforms available. In that case, you can
+define `g:syntastic_opencl_clcc_args` like this:
+
+  let g:syntastic_opencl_clcc_args = "-p 1"
+
+where `p` is the platform index. You can get the platform index from running `clcc -i`.
+
+With the same way, you might also enable warnings (only supported by some platforms) like this:
+
+  let g:syntastic_opencl_clcc_args = "-W"
+
 == Authors
 
 Originally, this was fork of http://www.vim.org/scripts/script.php?script_id=3157 with some little additions. That script provides syntax highlight for OpenCL (Open Computing Language) syntax files (*.cl).
