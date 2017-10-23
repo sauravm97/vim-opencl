@@ -5,15 +5,11 @@
 "License:     GPLv3
 "
 "============================================================================
-if exists("loaded_syntastic_opencl_clcc_checker")
-    finish
-endif
-let loaded_synstatic_opencl_clcc_checker = 1
 
-" fail if the user doesn't have opencl installed
-if !executable("clcc")
+if exists('g:loaded_syntastic_opencl_clcc_checker')
     finish
 endif
+let g:loaded_synstatic_opencl_clcc_checker = 1
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -25,37 +21,40 @@ else
 endif
 
 function! SyntaxCheckers_opencl_clcc_GetLocList() dict
-    let makeprg = self.makeprgBuild({ 'exe': 'clcc' })
+    let makeprg = self.makeprgBuild({})
 
     " Intel beignet format
-    let errorformat  =  '%E%f:%l:%c: error: %m,%-Z,'.
-                       \'%W%f:%l:%c: warning: %m,%-Z,'
+    let errorformat  =
+        \ '%E%f:%l:%c: error: %m,%-Z,'.
+        \ '%W%f:%l:%c: warning: %m,%-Z,'
     " pocl format
-    let errorformat .=  '%Eerror: %.%#:%l:%c: %m,%-Z,'
+    let errorformat .=
+        \ '%Eerror: %.%#:%l:%c: %m,%-Z,'
     " NVIDIA driver format
-    let errorformat .=  '%E:%l:%c: error: %m,%-Z%p^\[ ~\]%#,'.
-                       \'%W:%l:%c: warning: %m,%-Z%p^\[ ~\]%#,'.
-                       \'%I:%l:%c: note: %m,%-Z%p^\[ ~\]%#,'
+    let errorformat .=
+        \ '%E:%l:%c: error: %m,%-Z%p^\[ ~\]%#,'.
+        \ '%W:%l:%c: warning: %m,%-Z%p^\[ ~\]%#,'.
+        \ '%I:%l:%c: note: %m,%-Z%p^\[ ~\]%#,'
     " AMD driver format
-    let errorformat .=  '%E"%f"\, line %l: catastrophic error: %m,%+C%.%#,%-Z%p^,'.
-                       \'%E"%f"\, line %l: error: %m,%+C%.%#,%-Z%p^,'.
-                       \'%W"%f"\, line %l: warning: %m,%-C%.%#,'
+    let errorformat .=
+        \ '%E"%f"\, line %l: catastrophic error: %m,%+C%.%#,%-Z%p^,'.
+        \ '%E"%f"\, line %l: error: %m,%+C%.%#,%-Z%p^,'.
+        \ '%W"%f"\, line %l: warning: %m,%-C%.%#,'
     " Other lines should be hidden
-    let errorformat .= '%-G%.%#'
+    let errorformat .=
+        \ '%-G%.%#'
 
-	let loclist = SyntasticMake({ 'makeprg': makeprg, 'errorformat': errorformat })
-
-    " the file name isnt in the output so stick in the buf num manually
-	for i in loclist
-      let i['bufnr'] = bufnr("")
-	endfor
-
-    return loclist
+    return SyntasticMake({
+        \ 'makeprg': makeprg,
+        \ 'errorformat': errorformat,
+        \ 'defaults': { 'bufnr': bufnr('') } })
 endfunction
 
 call g:SyntasticRegistry.CreateAndRegisterChecker({
     \ 'filetype': 'opencl',
-    \ 'name': 'clcc'})
+    \ 'name': 'clcc' })
 
 let &cpo = s:save_cpo
 unlet s:save_cpo
+
+" vim: set sw=4 sts=4 et fdm=marker:
