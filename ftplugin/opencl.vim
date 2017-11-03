@@ -5,8 +5,8 @@ if version > 600
 endif
 
 " Smaller tab stops.
-setlocal tabstop=4
-setlocal shiftwidth=4
+setlocal tabstop=2
+setlocal shiftwidth=2
 
 " Smart tabbing/indenting
 setlocal smarttab
